@@ -7,6 +7,7 @@ import com.tutorpus.tutorpus.member.repository.MemberRepository;
 import com.tutorpus.tutorpus.member.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,5 +25,12 @@ public class MemberController {
     public ResponseEntity<?> getTeacherOrStudent(@RequestBody DevideDto devideDto){
         Role role = memberService.getTeacherOrStudent(devideDto);
         return ResponseEntity.ok(role + "역할이 세션에 저장되었습니다.");
+    }
+
+    //자체 회원가입
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody SignupDto signupDto) throws Exception {
+        memberService.signup(signupDto);
+        return ResponseEntity.ok("회원가입 성공");
     }
 }

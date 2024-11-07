@@ -24,4 +24,24 @@ public class MemberService {
         String role = devideDto.getRole();
         return Role.StringToEnum(role);
     }
+
+    @Transactional
+    public void signup(SignupDto signupDto) throws Exception {
+        //이미 회원이 존재하는 경우
+        if (memberRepository.findByEmail(signupDto.getEmail()).isPresent()) {
+            throw new Exception("이미 존재하는 이메일입니다.");
+        }
+
+        //role Enum으로 변경 및 비밀번호 암호화
+        Role role = Role.StringToEnum(signupDto.getRole());
+        signupDto.encodingPassword(passwordEncoder);
+
+        Member member = Member.builder()
+                .email(signupDto.getEmail())
+                .name(signupDto.getName())
+                .password(signupDto.getPassword())
+                .role(role)
+                .build();
+        memberRepository.save(member);
+    }
 }
