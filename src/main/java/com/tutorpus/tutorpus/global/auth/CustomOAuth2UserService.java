@@ -1,8 +1,9 @@
-package com.tutorpus.tutorpus.global.config;
+package com.tutorpus.tutorpus.global.auth;
 
-import com.tutorpus.tutorpus.global.config.dto.OAuthAttributes;
-import com.tutorpus.tutorpus.global.config.dto.SessionUser;
+import com.tutorpus.tutorpus.global.auth.dto.OAuthAttributes;
+import com.tutorpus.tutorpus.global.auth.dto.SessionUser;
 import com.tutorpus.tutorpus.member.entity.Member;
+import com.tutorpus.tutorpus.member.entity.Role;
 import com.tutorpus.tutorpus.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
-//로그인 이후 가져온 사용자의 정보(email, name, picture)들을 기반으로 가입 및 정보 수정, 세션 저장 등의 기능 지원
+//로그인 이후 가져온 사용자의 정보(email, name)들을 기반으로 가입 및 정보 수정, 세션 저장 등의 기능 지원
 @RequiredArgsConstructor
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -51,13 +52,15 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         );
     }
 
-    //구글 사용자 정보가 업데이트 되었을 때를 대비. 사용자의 이름이나 프로필 사진이 변경되면 User 엔티티에도 반영.
+    //저장 및 구글 사용자 정보가 업데이트 되었을 때를 대비. 사용자의 이름 변경되면 User 엔티티에도 반영.
     private Member saveOrUpdate(OAuthAttributes attributes) {
+        //세션에 저장해놓은 role 가져오기
+        Role role = (Role) httpSession.getAttribute("preRole");
         Member member = userRepository.findByEmail(attributes.getEmail())
                 // 구글 사용자 정보 업데이트(이미 가입된 사용자) => 업데이트
                 .map(entity -> entity.update(attributes.getName()))
-                // 가입되지 않은 사용자 => User 엔티티 생성
-                .orElse(attributes.toEntity());
+                // 가입되지 않은 사용자 => User 엔티티 생성(session에서 가져온 role)
+                .orElse(attributes.toEntity(role));
 
         return userRepository.save(member);
     }

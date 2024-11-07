@@ -1,4 +1,4 @@
-package com.tutorpus.tutorpus.global.config.dto;
+package com.tutorpus.tutorpus.global.auth.dto;
 
 import com.tutorpus.tutorpus.member.entity.Member;
 import com.tutorpus.tutorpus.member.entity.Role;
@@ -45,12 +45,11 @@ public class OAuthAttributes {
                 .build();
     }
 
-    // User 엔티티 생성
-    public Member toEntity() {
+    public Member toEntity(Role role) {
         return Member.builder()
                 .name(name)
                 .email(email)
-                .role(Role.USER)
+                .role(role)
                 .build();
     }
 }
