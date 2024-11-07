@@ -1,6 +1,6 @@
-package com.tutorpus.tutorpus.global.config;
+package com.tutorpus.tutorpus.config;
 
-import com.tutorpus.tutorpus.global.auth.CustomOAuth2UserService;
+import com.tutorpus.tutorpus.auth.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

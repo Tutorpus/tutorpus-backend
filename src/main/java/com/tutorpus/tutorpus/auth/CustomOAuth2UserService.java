@@ -1,7 +1,7 @@
-package com.tutorpus.tutorpus.global.auth;
+package com.tutorpus.tutorpus.auth;
 
-import com.tutorpus.tutorpus.global.auth.dto.OAuthAttributes;
-import com.tutorpus.tutorpus.global.auth.dto.SessionUser;
+import com.tutorpus.tutorpus.auth.dto.OAuthAttributes;
+import com.tutorpus.tutorpus.auth.dto.SessionUser;
 import com.tutorpus.tutorpus.member.entity.Member;
 import com.tutorpus.tutorpus.member.entity.Role;
 import com.tutorpus.tutorpus.member.repository.MemberRepository;

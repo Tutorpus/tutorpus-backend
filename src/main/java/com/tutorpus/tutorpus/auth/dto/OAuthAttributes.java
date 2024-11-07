@@ -1,4 +1,4 @@
-package com.tutorpus.tutorpus.global.auth.dto;
+package com.tutorpus.tutorpus.auth.dto;
 
 import com.tutorpus.tutorpus.member.entity.Member;
 import com.tutorpus.tutorpus.member.entity.Role;
