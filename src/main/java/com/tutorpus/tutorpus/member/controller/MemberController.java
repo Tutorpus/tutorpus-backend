@@ -1,11 +1,11 @@
 package com.tutorpus.tutorpus.member.controller;
 
+import com.tutorpus.tutorpus.auth.dto.SessionMember;
 import com.tutorpus.tutorpus.member.dto.DevideDto;
+import com.tutorpus.tutorpus.member.dto.LoginDto;
 import com.tutorpus.tutorpus.member.dto.SignupDto;
 import com.tutorpus.tutorpus.member.entity.Role;
-import com.tutorpus.tutorpus.member.repository.MemberRepository;
 import com.tutorpus.tutorpus.member.service.MemberService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

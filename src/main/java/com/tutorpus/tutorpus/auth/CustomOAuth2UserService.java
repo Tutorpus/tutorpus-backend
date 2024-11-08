@@ -1,7 +1,7 @@
 package com.tutorpus.tutorpus.auth;
 
 import com.tutorpus.tutorpus.auth.dto.OAuthAttributes;
-import com.tutorpus.tutorpus.auth.dto.SessionUser;
+import com.tutorpus.tutorpus.auth.dto.SessionMember;
 import com.tutorpus.tutorpus.member.entity.Member;
 import com.tutorpus.tutorpus.member.entity.Role;
 import com.tutorpus.tutorpus.member.repository.MemberRepository;
@@ -43,7 +43,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributionName, oAuth2User.getAttributes());
 
         Member member = saveOrUpdate(attributes);
-        httpSession.setAttribute("member", new SessionUser(member));    //세션에 사용자 정보 저장
+        httpSession.setAttribute("member", new SessionMember(member));    //세션에 사용자 정보 저장
 
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(member.getRoleKey())),

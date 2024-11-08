@@ -1,15 +1,20 @@
 package com.tutorpus.tutorpus.member.service;
 
+import com.tutorpus.tutorpus.auth.dto.SessionMember;
+import com.tutorpus.tutorpus.exception.DuplicateMemberException;
 import com.tutorpus.tutorpus.member.dto.DevideDto;
+import com.tutorpus.tutorpus.member.dto.LoginDto;
 import com.tutorpus.tutorpus.member.dto.SignupDto;
 import com.tutorpus.tutorpus.member.entity.Member;
 import com.tutorpus.tutorpus.member.entity.Role;
 import com.tutorpus.tutorpus.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @RequiredArgsConstructor
 @Service
@@ -29,7 +34,7 @@ public class MemberService {
     public void signup(SignupDto signupDto) throws Exception {
         //이미 회원이 존재하는 경우
         if (memberRepository.findByEmail(signupDto.getEmail()).isPresent()) {
-            throw new Exception("이미 존재하는 이메일입니다.");
+            throw new DuplicateMemberException("이미 존재하는 이메일입니다.");
         }
 
         //role Enum으로 변경 및 비밀번호 암호화

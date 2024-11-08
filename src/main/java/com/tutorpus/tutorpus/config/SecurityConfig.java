@@ -4,6 +4,7 @@ import com.tutorpus.tutorpus.auth.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,10 +24,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 //h2-console 띄우기 위해
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
-                //경로별 접근 권한
+                //경로별 접근 권한(로그인 이전은 전체 권한 부여)
                 .authorizeRequests(auth -> auth
-                        .requestMatchers("/", "/css/**", "/images/**", "/js/**", "/h2-console/**", "/profile", "/member/devide").permitAll()
-                        .requestMatchers("/api/v1/**").hasRole("TEACHER")
+                        .requestMatchers("/", "/css/**", "/images/**", "/js/**", "/h2-console/**", "/profile", "/member/**").permitAll()
+//                        .requestMatchers("/api/v1/**").hasRole("TEACHER")
                         .anyRequest().authenticated()
                 )
                 //로그아웃 성공 시 이동할 URL
@@ -35,8 +36,13 @@ public class SecurityConfig {
                 )
                 //로그인 이후 사용자 정보 가져오는 엔드포인트
                 .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/oauth2/authorization/google")
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                 )
+//                .formLogin(form -> form
+//                        .loginPage("/login") // 자체 로그인 페이지 경로
+//                        .permitAll()
+//                )
                 .build();
     }
 
