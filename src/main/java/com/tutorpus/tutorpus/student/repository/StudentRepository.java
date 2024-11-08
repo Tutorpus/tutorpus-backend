@@ -1,6 +1,6 @@
-package com.tutorpus.tutorpus.member.repository;
+package com.tutorpus.tutorpus.student.repository;
 
-import com.tutorpus.tutorpus.member.entity.Student;
+import com.tutorpus.tutorpus.student.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {

@@ -1,5 +1,6 @@
-package com.tutorpus.tutorpus.member.entity;
+package com.tutorpus.tutorpus.student.entity;
 
+import com.tutorpus.tutorpus.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
