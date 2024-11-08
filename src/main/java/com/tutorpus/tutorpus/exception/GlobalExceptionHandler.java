@@ -16,5 +16,12 @@ public class GlobalExceptionHandler {
     public String handleDuplicateMemberException(DuplicateMemberException ex) {
         return ex.getMessage();  // 예외 메시지 반환
     }
+
+    @ExceptionHandler(PasswordIncorrectException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)  // 401 UNAUTHORIZED 상태 코드 반환
+    @ResponseBody
+    public String handlePasswordIncorrectException(PasswordIncorrectException ex) {
+        return ex.getMessage();  // 예외 메시지 반환
+    }
 }
 

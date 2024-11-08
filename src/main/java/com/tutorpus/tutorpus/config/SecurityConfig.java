@@ -39,10 +39,10 @@ public class SecurityConfig {
                         .loginPage("/oauth2/authorization/google")
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                 )
-//                .formLogin(form -> form
-//                        .loginPage("/login") // 자체 로그인 페이지 경로
-//                        .permitAll()
-//                )
+                .formLogin(form -> form
+                        .loginPage("/login") // 자체 로그인 페이지 경로
+                        .permitAll()
+                )
                 .build();
     }
 

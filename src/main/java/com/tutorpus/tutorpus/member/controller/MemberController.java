@@ -33,4 +33,12 @@ public class MemberController {
         memberService.signup(signupDto);
         return ResponseEntity.ok("회원가입 성공");
     }
+
+    //자체 로그인
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginDto loginDto) throws Exception {
+        SessionMember loginMember = memberService.login(loginDto);
+        if (loginMember == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("존재하지 않는 회원입니다.");
+        return ResponseEntity.ok(loginMember);
+    }
 }

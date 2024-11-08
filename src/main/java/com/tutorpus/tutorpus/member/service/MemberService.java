@@ -2,6 +2,7 @@ package com.tutorpus.tutorpus.member.service;
 
 import com.tutorpus.tutorpus.auth.dto.SessionMember;
 import com.tutorpus.tutorpus.exception.DuplicateMemberException;
+import com.tutorpus.tutorpus.exception.PasswordIncorrectException;
 import com.tutorpus.tutorpus.member.dto.DevideDto;
 import com.tutorpus.tutorpus.member.dto.LoginDto;
 import com.tutorpus.tutorpus.member.dto.SignupDto;
@@ -10,11 +11,9 @@ import com.tutorpus.tutorpus.member.entity.Role;
 import com.tutorpus.tutorpus.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @RequiredArgsConstructor
 @Service
@@ -48,5 +47,19 @@ public class MemberService {
                 .role(role)
                 .build();
         memberRepository.save(member);
+    }
+
+    @Transactional
+    public SessionMember login(LoginDto loginDto) throws Exception {
+        Member member = memberRepository.findByEmail(loginDto.getEmail()).orElse(null);
+        if(member == null) return null;
+        if (!passwordEncoder.matches(loginDto.getPassword(), member.getPassword()))
+            throw new PasswordIncorrectException("비밀번호가 일치하지 않습니다.");
+
+        //세션저장용 dto로 묶어서 세션에 저장
+        SessionMember sessionMember = new SessionMember(member);
+        httpSession.setAttribute("member", sessionMember);
+
+        return sessionMember;
     }
 }
