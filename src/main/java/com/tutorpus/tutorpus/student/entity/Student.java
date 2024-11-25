@@ -33,10 +33,11 @@ public class Student {
     private String icon;
 
     @Builder
-    public Student(Member member, String school, int grade, String icon){
+    public Student(Member member, String school, int grade, String icon, String color){
         this.member = member;
         this.school = school;
         this.grade = grade;
+        this.color = color;
         this.icon = icon;
     }
 }
