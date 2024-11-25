@@ -1,6 +1,6 @@
 package com.tutorpus.tutorpus.auth;
 
-import com.tutorpus.tutorpus.auth.dto.SessionMember;
+import com.tutorpus.tutorpus.member.entity.Member;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -18,7 +18,7 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         boolean isLoginUserAnnotation = parameter.getParameterAnnotation(LoginUser.class) != null;
-        boolean isUserClass = SessionMember.class.equals(parameter.getParameterType());
+        boolean isUserClass = Member.class.equals(parameter.getParameterType());
 
         return isLoginUserAnnotation && isUserClass;
     }

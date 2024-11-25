@@ -1,24 +1,25 @@
 package com.tutorpus.tutorpus.member.controller;
 
+import com.tutorpus.tutorpus.auth.LoginUser;
 import com.tutorpus.tutorpus.auth.dto.SessionMember;
 import com.tutorpus.tutorpus.member.dto.DevideDto;
 import com.tutorpus.tutorpus.member.dto.LoginDto;
 import com.tutorpus.tutorpus.member.dto.SignupDto;
+import com.tutorpus.tutorpus.member.entity.Member;
 import com.tutorpus.tutorpus.member.entity.Role;
 import com.tutorpus.tutorpus.member.service.MemberService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/member")
 public class MemberController {
     private final MemberService memberService;
+    private final HttpSession httpSession;
 
     //선생님인지 학생인지 구분
     @PostMapping("/devide")
@@ -37,8 +38,13 @@ public class MemberController {
     //자체 로그인
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) throws Exception {
-        SessionMember loginMember = memberService.login(loginDto);
+        Member loginMember = memberService.login(loginDto);
         if (loginMember == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("존재하지 않는 회원입니다.");
         return ResponseEntity.ok(loginMember);
+    }
+
+    @GetMapping("/isLogin")
+    public ResponseEntity<?> isLogin(@LoginUser Member member){
+        return ResponseEntity.ok(member);
     }
 }

@@ -11,6 +11,11 @@ import com.tutorpus.tutorpus.member.entity.Role;
 import com.tutorpus.tutorpus.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+//import org.springframework.security.authentication.AuthenticationManager;
+//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+//import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+//import org.springframework.security.core.Authentication;
+//import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +26,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final HttpSession httpSession;
     private final PasswordEncoder passwordEncoder;
+//    private final AuthenticationManager authenticationManager;
 
     @Transactional
     public Role getTeacherOrStudent(DevideDto devideDto) {
@@ -50,16 +56,23 @@ public class MemberService {
     }
 
     @Transactional
-    public SessionMember login(LoginDto loginDto) throws Exception {
+    public Member login(LoginDto loginDto) throws Exception {
         Member member = memberRepository.findByEmail(loginDto.getEmail()).orElse(null);
         if(member == null) return null;
+
         if (!passwordEncoder.matches(loginDto.getPassword(), member.getPassword()))
             throw new PasswordIncorrectException("비밀번호가 일치하지 않습니다.");
 
-        //세션저장용 dto로 묶어서 세션에 저장
-        SessionMember sessionMember = new SessionMember(member);
-        httpSession.setAttribute("member", sessionMember);
+//        // 사용자 정보 기반으로 Authentication 객체 생성
+//        Authentication authentication = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())
+//        );
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return sessionMember;
+        // 세션에 사용자 정보 저장
+        //SessionMember sessionMember = new SessionMember(member);  // 세션에 저장할 사용자 정보
+        httpSession.setAttribute("member", member);
+
+        return member;
     }
 }
