@@ -1,8 +1,7 @@
 package com.tutorpus.tutorpus.member.service;
 
-import com.tutorpus.tutorpus.auth.dto.SessionMember;
-import com.tutorpus.tutorpus.exception.DuplicateMemberException;
-import com.tutorpus.tutorpus.exception.PasswordIncorrectException;
+import com.tutorpus.tutorpus.exception.CustomException;
+import com.tutorpus.tutorpus.exception.ErrorCode;
 import com.tutorpus.tutorpus.member.dto.DevideDto;
 import com.tutorpus.tutorpus.member.dto.LoginDto;
 import com.tutorpus.tutorpus.member.dto.SignupDto;
@@ -39,7 +38,7 @@ public class MemberService {
     public void signup(SignupDto signupDto) throws Exception {
         //이미 회원이 존재하는 경우
         if (memberRepository.findByEmail(signupDto.getEmail()).isPresent()) {
-            throw new DuplicateMemberException("이미 존재하는 이메일입니다.");
+            throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
         //role Enum으로 변경 및 비밀번호 암호화
@@ -61,7 +60,7 @@ public class MemberService {
         if(member == null) return null;
 
         if (!passwordEncoder.matches(loginDto.getPassword(), member.getPassword()))
-            throw new PasswordIncorrectException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.PASSWORD_INCORRECT);
 
 //        // 사용자 정보 기반으로 Authentication 객체 생성
 //        Authentication authentication = authenticationManager.authenticate(
