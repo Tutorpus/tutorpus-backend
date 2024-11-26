@@ -5,6 +5,8 @@ import com.tutorpus.tutorpus.auth.dto.SessionMember;
 import com.tutorpus.tutorpus.connect.dto.ConnectRequestDto;
 import com.tutorpus.tutorpus.connect.service.ConnectService;
 import com.tutorpus.tutorpus.member.entity.Member;
+import com.tutorpus.tutorpus.member.entity.Role;
+import com.tutorpus.tutorpus.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,9 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ConnectController {
     private final ConnectService connectService;
+    private final MemberRepository memberRepository;
 
     @PostMapping()
     public ResponseEntity<?> teacherStudentConnect(@RequestBody ConnectRequestDto connectDto, @LoginUser Member member){
+        //선생님만 학생 추가 가능
+        if (member.getRole() == Role.STUDENT) return ResponseEntity.ok("선생님만 학생 추가 가능");
         connectService.teacherStudentConnect(connectDto, member);
         return ResponseEntity.ok("선생님과 학생 연결 완료");
     }
