@@ -23,15 +23,11 @@ public class Schedule {
     @JoinColumn(name = "connect_id", referencedColumnName = "id", nullable = false)
     private Connect connect;
 
-    //수정&삭제 일자
+    //추가의 경우 일정 추가하는 날짜
+    //삭제의 경우 삭제하려는 날짜
     @Column(name = "edit_date", nullable = false)
     @CreationTimestamp
     private LocalDate editDate;
-
-    //변경 후 일자 - 삭제의 경우 null 가능
-    @Column(name = "add_date")
-    @CreationTimestamp
-    private LocalDate addDate;
 
     //과외 시작 시간 - 삭제의 경우 null 가능
     @Column(name = "start_time")
@@ -46,10 +42,10 @@ public class Schedule {
     private Boolean isDeleted;
 
     @Builder
-    public Schedule(Connect connect, Boolean isDeleted, LocalDate addDate, LocalTime startTime, LocalTime endTime) {
+    public Schedule(Connect connect, Boolean isDeleted, LocalDate editDate, LocalTime startTime, LocalTime endTime) {
         this.connect = connect;
         this.isDeleted = isDeleted;
-        this.addDate = addDate;
+        this.editDate = editDate;
         this.startTime = startTime;
         this.endTime = endTime;
     }
