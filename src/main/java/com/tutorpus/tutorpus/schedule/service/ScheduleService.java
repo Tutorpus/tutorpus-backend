@@ -8,6 +8,7 @@ import com.tutorpus.tutorpus.member.entity.Member;
 import com.tutorpus.tutorpus.member.entity.Role;
 import com.tutorpus.tutorpus.schedule.dto.AddScheduleDto;
 import com.tutorpus.tutorpus.schedule.dto.DeleteScheduleDto;
+import com.tutorpus.tutorpus.schedule.dto.EditScheduleDto;
 import com.tutorpus.tutorpus.schedule.entity.Schedule;
 import com.tutorpus.tutorpus.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,8 @@ public class ScheduleService {
         //선생님만 일정 추가 가능
         if (loginMember.getRole() != Role.TEACHER) throw new CustomException(ErrorCode.NOT_TEACHER);
         //dto에 시작시간과 종료시간 없는 경우(null값도 가능하기 때문에 에러처리 해줘야함)
-        if (addDto.getStartTime() == null || addDto.getEndTime() == null) throw new CustomException(ErrorCode.CANNOT_ADD_SCHEDULE);
+        if (addDto.getStartTime() == null || addDto.getEndTime() == null)
+            throw new CustomException(ErrorCode.CANNOT_ADD_SCHEDULE);
 
         Connect connect = connectRepository.findById(addDto.getConnectId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NO_CONNECT_ID));
@@ -36,6 +38,7 @@ public class ScheduleService {
                 .startTime(addDto.getStartTime())
                 .endTime(addDto.getEndTime())
                 .build();
+        scheduleRepository.save(schedule);
     }
 
     @Transactional
@@ -52,5 +55,36 @@ public class ScheduleService {
                 .startTime(null)
                 .endTime(null)
                 .build();
+        scheduleRepository.save(schedule);
+    }
+
+    @Transactional
+    public void editSchedule(EditScheduleDto editDto, Member loginMember) {
+        if (loginMember.getRole() != Role.TEACHER) throw new CustomException(ErrorCode.NOT_TEACHER);
+        if (editDto.getStartTime() == null || editDto.getEndTime() == null)
+            throw new CustomException(ErrorCode.CANNOT_ADD_SCHEDULE);
+
+        Connect connect = connectRepository.findById(editDto.getConnectId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NO_CONNECT_ID));
+
+        //삭제
+        Schedule deleteSchedule = Schedule.builder()
+                .connect(connect)
+                .isDeleted(true)   //삭제
+                .editDate(editDto.getEditDate())
+                .startTime(null)
+                .endTime(null)
+                .build();
+        scheduleRepository.save(deleteSchedule);
+
+        //추가
+        Schedule addSchedule = Schedule.builder()
+                .connect(connect)
+                .isDeleted(false)   //추가
+                .editDate(editDto.getAddDate())
+                .startTime(editDto.getStartTime())
+                .endTime(editDto.getEndTime())
+                .build();
+        scheduleRepository.save(addSchedule);
     }
 }
