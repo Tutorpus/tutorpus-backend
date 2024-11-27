@@ -24,6 +24,8 @@ public class ScheduleService {
     public void addSchedule(AddScheduleDto addDto, Member loginMember) {
         //선생님만 일정 추가 가능
         if (loginMember.getRole() != Role.TEACHER) throw new CustomException(ErrorCode.NOT_TEACHER);
+        //dto에 시작시간과 종료시간 없는 경우(null값도 가능하기 때문에 에러처리 해줘야함)
+        if (addDto.getStartTime() == null || addDto.getEndTime() == null) throw new CustomException(ErrorCode.CANNOT_ADD_SCHEDULE);
 
         Connect connect = connectRepository.findById(addDto.getConnectId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NO_CONNECT_ID));
