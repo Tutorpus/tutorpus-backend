@@ -3,6 +3,7 @@ package com.tutorpus.tutorpus.schedule.controller;
 import com.tutorpus.tutorpus.auth.LoginUser;
 import com.tutorpus.tutorpus.member.entity.Member;
 import com.tutorpus.tutorpus.schedule.dto.AddScheduleDto;
+import com.tutorpus.tutorpus.schedule.dto.DeleteScheduleDto;
 import com.tutorpus.tutorpus.schedule.entity.Schedule;
 import com.tutorpus.tutorpus.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +24,12 @@ public class ScheduleController {
     public ResponseEntity<?> addSchedule(@RequestBody AddScheduleDto addDto, @LoginUser Member loginMember){
         scheduleService.addSchedule(addDto, loginMember);
         return ResponseEntity.ok("스케쥴 추가 완료");
+    }
+
+    //스케쥴 삭제
+    @PostMapping("/delete")
+    public ResponseEntity<?> deleteSchedule(@RequestBody DeleteScheduleDto deleteDto, @LoginUser Member loginMember){
+        scheduleService.deleteSchedule(deleteDto, loginMember);
+        return ResponseEntity.ok("스케쥴 삭제 완료");
     }
 }

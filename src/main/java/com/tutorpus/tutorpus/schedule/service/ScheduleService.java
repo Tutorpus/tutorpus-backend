@@ -7,6 +7,7 @@ import com.tutorpus.tutorpus.exception.ErrorCode;
 import com.tutorpus.tutorpus.member.entity.Member;
 import com.tutorpus.tutorpus.member.entity.Role;
 import com.tutorpus.tutorpus.schedule.dto.AddScheduleDto;
+import com.tutorpus.tutorpus.schedule.dto.DeleteScheduleDto;
 import com.tutorpus.tutorpus.schedule.entity.Schedule;
 import com.tutorpus.tutorpus.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,22 @@ public class ScheduleService {
                 .editDate(addDto.getAddDate())
                 .startTime(addDto.getStartTime())
                 .endTime(addDto.getEndTime())
+                .build();
+    }
+
+    @Transactional
+    public void deleteSchedule(DeleteScheduleDto deleteDto, Member loginMember) {
+        //선생님만 일정 삭제 가능
+        if (loginMember.getRole() != Role.TEACHER) throw new CustomException(ErrorCode.NOT_TEACHER);
+
+        Connect connect = connectRepository.findById(deleteDto.getConnectId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NO_CONNECT_ID));
+        Schedule schedule = Schedule.builder()
+                .connect(connect)
+                .isDeleted(true)   //삭제
+                .editDate(deleteDto.getDeleteDate())
+                .startTime(null)
+                .endTime(null)
                 .build();
     }
 }
