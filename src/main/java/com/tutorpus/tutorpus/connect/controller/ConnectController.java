@@ -24,7 +24,6 @@ public class ConnectController {
     @PostMapping()
     public ResponseEntity<?> teacherStudentConnect(@RequestBody ConnectRequestDto connectDto, @LoginUser Member member){
         //선생님만 학생 추가 가능
-        if (member.getRole() == Role.STUDENT) return ResponseEntity.ok("선생님만 학생 추가 가능");
         connectService.teacherStudentConnect(connectDto, member);
         return ResponseEntity.ok("선생님과 학생 연결 완료");
     }

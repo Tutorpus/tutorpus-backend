@@ -38,6 +38,7 @@ public class ConnectService {
             //요일 enum으로 변경
             Day day = Day.valueOf(timeSlot.getDay());
             ClassDay classDay = ClassDay.builder()
+                    .connect(connect)
                     .day(day)
                     .startTime(timeSlot.getStartTime())
                     .endTime(timeSlot.getEndTime())
