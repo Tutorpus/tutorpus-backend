@@ -1,12 +1,15 @@
 package com.tutorpus.tutorpus.schedule.service;
 
+import com.tutorpus.tutorpus.connect.entity.ClassDay;
 import com.tutorpus.tutorpus.connect.entity.Connect;
+import com.tutorpus.tutorpus.connect.repository.ClassDayRepository;
 import com.tutorpus.tutorpus.connect.repository.ConnectRepository;
 import com.tutorpus.tutorpus.exception.CustomException;
 import com.tutorpus.tutorpus.exception.ErrorCode;
 import com.tutorpus.tutorpus.member.entity.Member;
 import com.tutorpus.tutorpus.member.entity.Role;
 import com.tutorpus.tutorpus.schedule.dto.AddScheduleDto;
+import com.tutorpus.tutorpus.schedule.dto.ClassReturnDto;
 import com.tutorpus.tutorpus.schedule.dto.DeleteScheduleDto;
 import com.tutorpus.tutorpus.schedule.dto.EditScheduleDto;
 import com.tutorpus.tutorpus.schedule.entity.Schedule;
@@ -15,11 +18,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Service
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final ConnectRepository connectRepository;
+    private final ClassDayRepository classDayRepository;
 
     @Transactional
     public void addSchedule(AddScheduleDto addDto, Member loginMember) {
@@ -86,5 +96,27 @@ public class ScheduleService {
                 .endTime(editDto.getEndTime())
                 .build();
         scheduleRepository.save(addSchedule);
+    }
+
+    @Transactional(readOnly = true)
+    public ClassReturnDto returnDateSchedule(int year, int month){
+        //시작날짜가 지난 classDay list
+        List<ClassDay> classDays = classDayRepository.findByYearAndMonth(year, month);
+        List<LocalDate> returnDates = new ArrayList<>();
+
+        // 해당 월의 첫날과 마지막 날 계산 (YearMonth 클래스 사용)
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDate startOfMonth = yearMonth.atDay(1);
+        LocalDate endOfMonth = yearMonth.atEndOfMonth();
+
+        for(ClassDay c : classDays){
+            List<LocalDate> matchingDates = startOfMonth.datesUntil(endOfMonth.plusDays(1))
+                    .filter(date ->
+                            !date.isBefore(c.getStartDate()) && // startDate 이후의 날짜
+                                    date.getDayOfWeek() == c.getDay().getDayOfWeek()) // enum의 요일과 일치
+                    .collect(Collectors.toList());
+            returnDates.addAll(matchingDates);
+        }
+        return new ClassReturnDto(returnDates);
     }
 }
