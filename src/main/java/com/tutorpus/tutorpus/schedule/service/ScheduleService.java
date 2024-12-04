@@ -129,7 +129,8 @@ public class ScheduleService {
 
     @Transactional(readOnly = true)
     //정말 전체 스케쥴
-    public List<LocalDate> realScheduleList(int year, int month, Member member, List<Connect> connectList){
+    public List<LocalDate> realScheduleList(int year, int month, Member member){
+        List<Connect> connectList = connectRepository.findByMemberId(member.getId());
         List<LocalDate> onlyDaySchedule = onlyWithDaySchedule(year, month, member); //classDay의 요일의 전체 날짜만 조회
         //삭제 및 추가 리스트
         List<LocalDate> deleteList = new ArrayList<>();
