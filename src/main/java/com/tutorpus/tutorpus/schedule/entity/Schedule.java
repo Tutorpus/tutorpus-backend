@@ -26,7 +26,6 @@ public class Schedule {
     //추가의 경우 일정 추가하는 날짜
     //삭제의 경우 삭제하려는 날짜
     @Column(name = "edit_date", nullable = false)
-    @CreationTimestamp
     private LocalDate editDate;
 
     //과외 시작 시간 - 삭제의 경우 null 가능
