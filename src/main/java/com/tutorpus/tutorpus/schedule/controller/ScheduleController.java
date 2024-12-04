@@ -48,9 +48,9 @@ public class ScheduleController {
     }
 
     //스케쥴 조회
-    @GetMapping()
-    public ResponseEntity<?> getSchedule(@LoginUser Member member){
-        List<LocalDate> localDates = scheduleService.realScheduleList(2024, 12, member);
+    @GetMapping("/{year}/{month}")
+    public ResponseEntity<?> getSchedule(@LoginUser Member loginMember, @PathVariable int year, @PathVariable int month){
+        List<LocalDate> localDates = scheduleService.realScheduleList(year, month, loginMember);
         return ResponseEntity.ok(localDates);
     }
 }
