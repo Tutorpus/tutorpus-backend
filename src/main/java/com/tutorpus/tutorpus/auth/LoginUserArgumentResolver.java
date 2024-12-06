@@ -1,5 +1,7 @@
 package com.tutorpus.tutorpus.auth;
 
+import com.tutorpus.tutorpus.exception.CustomException;
+import com.tutorpus.tutorpus.exception.ErrorCode;
 import com.tutorpus.tutorpus.member.entity.Member;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,9 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        return httpSession.getAttribute("member");
+        Member member = (Member) httpSession.getAttribute("member");
+        if (member == null)
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        return member;
     }
 }
