@@ -6,9 +6,7 @@ import com.tutorpus.tutorpus.connect.entity.Connect;
 import com.tutorpus.tutorpus.connect.repository.ClassDayRepository;
 import com.tutorpus.tutorpus.connect.repository.ConnectRepository;
 import com.tutorpus.tutorpus.member.entity.Member;
-import com.tutorpus.tutorpus.schedule.dto.AddScheduleDto;
-import com.tutorpus.tutorpus.schedule.dto.DeleteScheduleDto;
-import com.tutorpus.tutorpus.schedule.dto.EditScheduleDto;
+import com.tutorpus.tutorpus.schedule.dto.*;
 import com.tutorpus.tutorpus.schedule.entity.Schedule;
 import com.tutorpus.tutorpus.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
@@ -49,8 +47,10 @@ public class ScheduleController {
 
     //스케쥴 조회
     @GetMapping("/{year}/{month}")
-    public ResponseEntity<?> getSchedule(@LoginUser Member loginMember, @PathVariable int year, @PathVariable int month){
+    public ResponseEntity<?> getSchedule(@LoginUser Member loginMember,
+                                         @PathVariable int year, @PathVariable int month){
         List<LocalDate> localDates = scheduleService.realScheduleList(year, month, loginMember);
-        return ResponseEntity.ok(localDates);
+        ClassReturnDto dto = new ClassReturnDto(localDates);
+        return ResponseEntity.ok(dto);
     }
 }
