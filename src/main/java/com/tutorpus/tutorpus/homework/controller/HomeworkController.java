@@ -47,7 +47,7 @@ public class HomeworkController {
         return ResponseEntity.ok("숙제 수정 완료");
     }
 
-    @GetMapping("/{homeworkId}")
+    @GetMapping("/delete/{homeworkId}")
     public ResponseEntity<?> deleteHomework(@LoginUser Member member,
                                             @PathVariable("homeworkId") Long homeworkId){
         homeworkService.deleteHomework(member, homeworkId);
