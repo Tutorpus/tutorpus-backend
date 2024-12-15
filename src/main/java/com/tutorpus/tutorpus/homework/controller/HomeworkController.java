@@ -4,6 +4,7 @@ import com.tutorpus.tutorpus.auth.LoginUser;
 import com.tutorpus.tutorpus.exception.CustomException;
 import com.tutorpus.tutorpus.exception.ErrorCode;
 import com.tutorpus.tutorpus.homework.dto.AddHomeworkDto;
+import com.tutorpus.tutorpus.homework.dto.EditHomeworkDto;
 import com.tutorpus.tutorpus.homework.dto.ReturnHomeworkDto;
 import com.tutorpus.tutorpus.homework.service.HomeworkService;
 import com.tutorpus.tutorpus.member.entity.Member;
@@ -34,5 +35,22 @@ public class HomeworkController {
             throw new CustomException(ErrorCode.NO_AUTHORITY_TO_STUDENT);
         homeworkService.addHomework(member, dto);
         return ResponseEntity.ok("숙제 등록 완료");
+    }
+
+    //숙제 수정
+    @PostMapping("/edit")
+    public ResponseEntity<?> editHomework(@LoginUser Member member, @RequestBody EditHomeworkDto dto) {
+        if (member.getRole() == Role.STUDENT) {
+            throw new CustomException(ErrorCode.NO_AUTHORITY_TO_STUDENT);
+        }
+        homeworkService.editHomework(member, dto);
+        return ResponseEntity.ok("숙제 수정 완료");
+    }
+
+    @GetMapping("/delete/{homeworkId}")
+    public ResponseEntity<?> deleteHomework(@LoginUser Member member,
+                                            @PathVariable("homeworkId") Long homeworkId){
+        homeworkService.deleteHomework(member, homeworkId);
+        return ResponseEntity.ok("숙제 삭제 완료");
     }
 }

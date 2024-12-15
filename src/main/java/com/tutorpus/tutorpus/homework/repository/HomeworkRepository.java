@@ -7,8 +7,11 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface HomeworkRepository extends JpaRepository<Homework, Long> {
+    Optional<Homework> findById(Long id);
+
     @Query(value = "SELECT * FROM homework h " +
             "WHERE h.connect_id = :connectId " +
             "AND h.class_date BETWEEN :startOfDay AND :endOfDay",

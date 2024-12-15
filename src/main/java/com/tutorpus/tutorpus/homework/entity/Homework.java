@@ -54,4 +54,10 @@ public class Homework {
         this.endDate = endDate;
         this.done = done;
     }
+
+    public void updateHomework(String title, String content, LocalDateTime endDate) {
+        this.title = title;
+        this.content = content;
+        this.endDate = endDate;
+    }
 }
