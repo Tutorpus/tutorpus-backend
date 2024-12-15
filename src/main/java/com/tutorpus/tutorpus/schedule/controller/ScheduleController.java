@@ -54,4 +54,12 @@ public class ScheduleController {
         List<ClassDto> classDtos = scheduleService.scheduleDetail(year, month, day, loginMember);
         return ResponseEntity.ok(classDtos);
     }
+    
+    //한 학생의 전체 스케쥴 조회
+    @GetMapping("/student/{connectId}/{year}/{month}")
+    public ResponseEntity<?> getStudentSchedule(@LoginUser Member loginMember,
+                                              @PathVariable("connectId") Long connectId, @PathVariable("year") int year, @PathVariable("month") int month){
+        Map<LocalDate, StudentScheduleDto> returnDto = scheduleService.scheduleStudentDetail(year, month, loginMember, connectId);
+        return ResponseEntity.ok(returnDto);
+    }
 }
