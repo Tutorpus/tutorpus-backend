@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Getter
-public class addHomeworkDto {
+public class AddHomeworkDto {
     private Long connectId;
     private LocalDateTime classDate;
     private String title;
