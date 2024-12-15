@@ -11,6 +11,8 @@ import com.tutorpus.tutorpus.member.entity.Role;
 import com.tutorpus.tutorpus.schedule.dto.*;
 import com.tutorpus.tutorpus.schedule.entity.Schedule;
 import com.tutorpus.tutorpus.schedule.repository.ScheduleRepository;
+import com.tutorpus.tutorpus.student.entity.Student;
+import com.tutorpus.tutorpus.student.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,7 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final ConnectRepository connectRepository;
     private final ClassDayRepository classDayRepository;
+    private final StudentRepository studentRepository;
 
     @Transactional
     public void addSchedule(AddScheduleDto addDto, Member loginMember) {
@@ -171,10 +175,13 @@ public class ScheduleService {
             for (ClassDay classDay : classDays) {
                 // 클릭한 날짜의 요일과 classDay의 요일 비교
                 if (classDay.getDay().getDayOfWeek() == clickDate.getDayOfWeek()) {
+                    //학생정보
+                    Student student = studentRepository.findByMemberId(connect.getStudent().getId());
                     ClassDto dto = ClassDto.builder()
                             .connectId(connect.getId())
                             .studentName(connect.getStudent().getName())
                             .subject(connect.getSubject())
+                            .color(student.getColor())
                             .startTime(classDay.getStartTime())
                             .endTime(classDay.getEndTime())
                             .build();
@@ -194,14 +201,16 @@ public class ScheduleService {
         //추가 - 해당 날짜가 추가 리스트에 있는 경우
         for(Connect connect : connectList) {
             List<Schedule> addDate = scheduleRepository.findByConnectIdAndDateAndIsDeleted(connect.getId(), clickDate, false);
+            //학생정보
+            Student student = studentRepository.findByMemberId(connect.getStudent().getId());
             for(Schedule add : addDate){
                 ClassDto dto = ClassDto.builder()
                         .connectId(connect.getId())
                         .studentName(connect.getStudent().getName())
                         .subject(connect.getSubject())
+                        .color(student.getColor())
                         .startTime(add.getStartTime())
                         .endTime(add.getEndTime())
-                        .date(clickDate)
                         .build();
                 classDtos.add(dto);
             }
