@@ -13,5 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClassReturnDto {
+    private String color;
     private List<LocalDate> dates;
 }

@@ -11,15 +11,15 @@ import com.tutorpus.tutorpus.member.entity.Role;
 import com.tutorpus.tutorpus.schedule.dto.*;
 import com.tutorpus.tutorpus.schedule.entity.Schedule;
 import com.tutorpus.tutorpus.schedule.repository.ScheduleRepository;
+import com.tutorpus.tutorpus.student.entity.Student;
+import com.tutorpus.tutorpus.student.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -28,6 +28,7 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final ConnectRepository connectRepository;
     private final ClassDayRepository classDayRepository;
+    private final StudentRepository studentRepository;
 
     @Transactional
     public void addSchedule(AddScheduleDto addDto, Member loginMember) {
@@ -97,14 +98,9 @@ public class ScheduleService {
     }
 
     //단순 저장한 classDay의 요일의 전체 날짜만 조회
-    public List<LocalDate> onlyWithDaySchedule(int year, int month, Member member){
-        //로그인된 member가 진행하고 있는 모든 과외(Connect) 들고오기
-        List<Connect> memberConnects = connectRepository.findByMemberId(member.getId());
+    public List<LocalDate> onlyWithDayScheduleAndConnect(int year, int month, Connect connect){
         //시작날짜가 지난 classDay list
-        List<ClassDay> classDays = new ArrayList<>();
-        for(Connect connect : memberConnects){
-            classDays.addAll(classDayRepository.findByYearAndMonth(connect.getId(), year, month));
-        }
+        List<ClassDay> classDays = classDayRepository.findByYearAndMonth(connect.getId(), year, month);
 
         // 해당 월의 첫날과 마지막 날 계산 (YearMonth 클래스 사용)
         YearMonth yearMonth = YearMonth.of(year, month);
@@ -124,38 +120,39 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    //정말 전체 스케쥴
-    public List<LocalDate> realScheduleList(int year, int month, Member member){
+    public Map<Long, ClassReturnDto> realScheduleList(int year, int month, Member member) {
         List<Connect> connectList = connectRepository.findByMemberId(member.getId());
-        List<LocalDate> onlyDaySchedule = onlyWithDaySchedule(year, month, member); //classDay의 요일의 전체 날짜만 조회
-        //삭제 및 추가 리스트
-        List<LocalDate> deleteList = new ArrayList<>();
-        List<LocalDate> addList = new ArrayList<>();
-        for(Connect connect : connectList){
-            List<LocalDate> delete = scheduleRepository.findByConnectIdAndIsDeleted(connect.getId(), true).stream()
+        Map<Long, ClassReturnDto> scheduleMap = new HashMap<>();   // 결과저장용 Map
+
+        for (Connect connect : connectList) {
+            // 각 Connect에 대한 날짜 리스트를 구함
+            Student student = studentRepository.findByMemberId(connect.getStudent().getId());
+            List<LocalDate> onlyDaySchedule = onlyWithDayScheduleAndConnect(year, month, connect); // Connect별로 처리
+            List<LocalDate> deleteList = scheduleRepository.findByConnectIdAndIsDeleted(connect.getId(), true).stream()
                     .map(schedule -> schedule.getEditDate())
                     .collect(Collectors.toList());
-            deleteList.addAll(delete);
-            List<LocalDate> add = scheduleRepository.findByConnectIdAndIsDeleted(connect.getId(), false).stream()
+            List<LocalDate> addList = scheduleRepository.findByConnectIdAndIsDeleted(connect.getId(), false).stream()
                     .map(schedule -> schedule.getEditDate())
                     .collect(Collectors.toList());
-            addList.addAll(add);
-        }
-        //삭제
-        for(LocalDate date : deleteList){
-            if (onlyDaySchedule.contains(date)){
+
+            // 삭제
+            for (LocalDate date : deleteList) {
                 onlyDaySchedule.remove(date);
             }
-        }
-        //추가
-        for(LocalDate date : addList){
-            if (!onlyDaySchedule.contains(date)){
-                onlyDaySchedule.add(date);
+            // 추가
+            for (LocalDate date : addList) {
+                if (!onlyDaySchedule.contains(date)) {
+                    onlyDaySchedule.add(date);
+                }
             }
+
+            // 날짜 정렬
+            onlyDaySchedule.sort(Comparator.naturalOrder());
+            ClassReturnDto dayDto = new ClassReturnDto(student.getColor(), onlyDaySchedule);
+            scheduleMap.put(connect.getId(), dayDto);
         }
 
-        onlyDaySchedule.sort(Comparator.naturalOrder());
-        return onlyDaySchedule;
+        return scheduleMap;
     }
 
     @Transactional(readOnly = true)
@@ -171,10 +168,13 @@ public class ScheduleService {
             for (ClassDay classDay : classDays) {
                 // 클릭한 날짜의 요일과 classDay의 요일 비교
                 if (classDay.getDay().getDayOfWeek() == clickDate.getDayOfWeek()) {
+                    //학생정보
+                    Student student = studentRepository.findByMemberId(connect.getStudent().getId());
                     ClassDto dto = ClassDto.builder()
                             .connectId(connect.getId())
                             .studentName(connect.getStudent().getName())
                             .subject(connect.getSubject())
+                            .color(student.getColor())
                             .startTime(classDay.getStartTime())
                             .endTime(classDay.getEndTime())
                             .build();
@@ -194,14 +194,16 @@ public class ScheduleService {
         //추가 - 해당 날짜가 추가 리스트에 있는 경우
         for(Connect connect : connectList) {
             List<Schedule> addDate = scheduleRepository.findByConnectIdAndDateAndIsDeleted(connect.getId(), clickDate, false);
+            //학생정보
+            Student student = studentRepository.findByMemberId(connect.getStudent().getId());
             for(Schedule add : addDate){
                 ClassDto dto = ClassDto.builder()
                         .connectId(connect.getId())
                         .studentName(connect.getStudent().getName())
                         .subject(connect.getSubject())
+                        .color(student.getColor())
                         .startTime(add.getStartTime())
                         .endTime(add.getEndTime())
-                        .date(clickDate)
                         .build();
                 classDtos.add(dto);
             }
