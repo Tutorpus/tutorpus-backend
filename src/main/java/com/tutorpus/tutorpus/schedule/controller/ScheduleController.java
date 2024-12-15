@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,9 +43,8 @@ public class ScheduleController {
     @GetMapping("/{year}/{month}")
     public ResponseEntity<?> getSchedule(@LoginUser Member loginMember,
                                          @PathVariable("year") int year, @PathVariable("month") int month){
-        List<LocalDate> localDates = scheduleService.realScheduleList(year, month, loginMember);
-        ClassReturnDto dto = new ClassReturnDto(localDates);
-        return ResponseEntity.ok(dto);
+        Map<Long, ClassReturnDto> returnDto = scheduleService.realScheduleList(year, month, loginMember);
+        return ResponseEntity.ok(returnDto);
     }
 
     //하루 스케쥴 조회
