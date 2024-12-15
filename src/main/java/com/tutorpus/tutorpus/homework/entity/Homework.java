@@ -33,8 +33,8 @@ public class Homework {
     private String content;
 
     //숙제 마감일자
-    @Column(name = "finish_date", nullable = false)
-    private LocalDateTime finishDate;
+    @Column(name = "end_date", nullable = false)
+    private LocalDateTime endDate;
 
     //숙제 마감일자
     @Column(nullable = false)
@@ -46,12 +46,12 @@ public class Homework {
     private LocalDateTime createTime;
 
     @Builder
-    public Homework(Connect connect, LocalDateTime classDate, String title, String content, LocalDateTime finishDate, Boolean done) {
+    public Homework(Connect connect, LocalDateTime classDate, String title, String content, LocalDateTime endDate, Boolean done) {
         this.connect = connect;
         this.classDate = classDate;
         this.title = title;
         this.content = content;
-        this.finishDate = finishDate;
+        this.endDate = endDate;
         this.done = done;
     }
 }
