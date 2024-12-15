@@ -17,6 +17,7 @@ public enum ErrorCode {
     CANNOT_ADD_SCHEDULE("과외 시작시간과 종료시간이 없습니다.", HttpStatus.BAD_REQUEST),
     NO_EXIST_DAY("존재하지 않는 요일입니다.", HttpStatus.BAD_REQUEST),
     NO_CORRECT_CONNECT_ID("해당 연결id와 로그인 정보가 맞지 않습니다.", HttpStatus.BAD_REQUEST),
+    NO_HOMEWORK_ID("해당 숙제id가 없습니다.", HttpStatus.BAD_REQUEST),
 
     // 공통 에러
     INTERNAL_SERVER_ERROR("서버 에러가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
