@@ -81,4 +81,13 @@ public class HomeworkService {
 
         homework.updateHomework(dto.getTitle(), dto.getContent(), dto.getEndDate());
     }
+
+    @Transactional
+    public void deleteHomework(Member member, Long homeworkId) {
+        Homework homework = homeworkRepository.findById(homeworkId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NO_HOMEWORK_ID));
+        if(!homework.getConnect().getTeacher().getId().equals(member.getId()))
+            throw new CustomException(ErrorCode.NO_CORRECT_CONNECT_ID);
+        homeworkRepository.delete(homework);
+    }
 }

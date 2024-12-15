@@ -46,4 +46,11 @@ public class HomeworkController {
         homeworkService.editHomework(member, dto);
         return ResponseEntity.ok("숙제 수정 완료");
     }
+
+    @GetMapping("/{homeworkId}")
+    public ResponseEntity<?> deleteHomework(@LoginUser Member member,
+                                            @PathVariable("homeworkId") Long homeworkId){
+        homeworkService.deleteHomework(member, homeworkId);
+        return ResponseEntity.ok("숙제 삭제 완료");
+    }
 }
