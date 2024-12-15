@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 public class StudentListDto {
     private Long connectId;
+    private Long memberId;
     private String name;
     private String school;
     private String iconPath;
@@ -15,8 +16,9 @@ public class StudentListDto {
     private String color;
 
     @Builder
-    public StudentListDto(Long connectId, String name, String school, String iconPath, String subject, String color){
+    public StudentListDto(Long connectId, Long memberId, String name, String school, String iconPath, String subject, String color){
         this.connectId = connectId;
+        this.memberId = memberId;
         this.name = name;
         this.school = school;
         this.iconPath = iconPath;

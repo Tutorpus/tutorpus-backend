@@ -42,6 +42,7 @@ public class StudentService {
             Student student = studentRepository.findByMemberId(connect.getStudent().getId());
             StudentListDto dto = StudentListDto.builder()
                     .connectId(connect.getId())
+                    .memberId(connect.getStudent().getId())
                     .name(connect.getStudent().getName())
                     .school(student.getSchool() + student.getGrade())
                     .iconPath(student.getIcon())
