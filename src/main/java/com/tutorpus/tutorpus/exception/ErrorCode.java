@@ -9,6 +9,7 @@ public enum ErrorCode {
     NO_MEMBER("존재하는 회원이 없습니다.", HttpStatus.BAD_REQUEST),
     NOT_TEACHER("선생님만 학생을 저장할 수 있습니다.", HttpStatus.BAD_REQUEST),
     NOT_STUDENT("학생이 아닙니다.", HttpStatus.BAD_REQUEST),
+    NO_AUTHORITY_TO_STUDENT("학생은 권한이 없습니다.", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED("로그인이 필요합니다.", HttpStatus.UNAUTHORIZED),
 
     //스케쥴 관련
