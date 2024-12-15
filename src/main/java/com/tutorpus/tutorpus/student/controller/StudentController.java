@@ -38,12 +38,4 @@ public class StudentController {
         List<StudentListDto> returnDto = studentService.getStudentList(member);
         return ResponseEntity.ok(returnDto);
     }
-
-    @GetMapping("detail")
-    public ResponseEntity<?> studentDetail(@LoginUser Member member){
-        if(member.getRole() == Role.STUDENT)
-            throw new CustomException(ErrorCode.NO_AUTHORITY_TO_STUDENT);
-        List<StudentListDto> returnDto = studentService.getStudentList(member);
-        return ResponseEntity.ok(returnDto);
-    }
 }
