@@ -210,4 +210,60 @@ public class ScheduleService {
         }
         return classDtos;
     }
+
+    @Transactional(readOnly = true)
+    public Map<LocalDate, StudentScheduleDto> scheduleStudentDetail(int year, int month, Member loginMember, Long connectId) {
+        Connect connect = connectRepository.findById(connectId)
+                        .orElseThrow(()-> new CustomException(ErrorCode.NO_CONNECT_ID));
+        Map<LocalDate, StudentScheduleDto> returnDto = new HashMap<>(); //반환 dto
+
+        //추가/삭제 제외 날짜 리스트
+        List<ClassDay> classDays = classDayRepository.findByYearAndMonth(connect.getId(), year, month);
+        // 해당 월의 첫날과 마지막 날 계산 (YearMonth 클래스 사용)
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDate startOfMonth = yearMonth.atDay(1);
+        LocalDate endOfMonth = yearMonth.atEndOfMonth();
+
+        for(ClassDay c : classDays){
+            Map<LocalDate, StudentScheduleDto> matchingDates = startOfMonth.datesUntil(endOfMonth.plusDays(1))
+                    .filter(date ->
+                            !date.isBefore(c.getStartDate()) && // startDate 이후의 날짜
+                                    date.getDayOfWeek() == c.getDay().getDayOfWeek()) // enum의 요일과 일치
+                    .collect(Collectors.toMap(
+                            date -> date,
+                            date -> {
+                                StudentScheduleDto dto = StudentScheduleDto.builder()
+                                        .day(c.getDay().getDayOfWeek())
+                                        .startTime(c.getStartTime())
+                                        .endTime(c.getEndTime())
+                                        .build();
+                                return dto;
+                            }
+                    ));
+            returnDto.putAll(matchingDates);
+        }
+
+        //삭제 후 추가
+        List<Schedule> deleteSchedule = scheduleRepository.findByConnectIdAndIsDeleted(connect.getId(), true);
+        List<Schedule> addSchedule = scheduleRepository.findByConnectIdAndIsDeleted(connect.getId(), false);
+        // 삭제
+        for (Schedule s : deleteSchedule) {
+            returnDto.remove(s.getEditDate());
+        }
+        // 추가
+        for (Schedule s : addSchedule) {
+            if (!returnDto.containsKey(s.getEditDate())) {
+                StudentScheduleDto dto = StudentScheduleDto.builder()
+                        .day(s.getEditDate().getDayOfWeek())
+                        .startTime(s.getStartTime())
+                        .endTime(s.getEndTime())
+                        .build();
+                returnDto.put(s.getEditDate(), dto);
+            }
+        }
+
+        //정렬 후 반환
+        Map<LocalDate, StudentScheduleDto> sortedMap = new TreeMap<>(returnDto);   
+        return sortedMap;
+    }
 }
