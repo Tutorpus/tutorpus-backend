@@ -43,6 +43,12 @@ public class MemberController {
         return ResponseEntity.ok(loginMember);
     }
 
+    @GetMapping("/logout")
+    public ResponseEntity<?> logout(@LoginUser Member member){
+        memberService.logout(member);
+        return ResponseEntity.ok("로그아웃 완료");
+    }
+
     @GetMapping("/isLogin")
     public ResponseEntity<?> isLogin(@LoginUser Member member){
         return ResponseEntity.ok(member);
