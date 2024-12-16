@@ -74,4 +74,9 @@ public class MemberService {
 
         return member;
     }
+
+    public void logout(Member member) {
+        httpSession.removeAttribute("member");
+        httpSession.invalidate();
+    }
 }
