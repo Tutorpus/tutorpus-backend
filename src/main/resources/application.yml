@@ -1,0 +1,20 @@
+spring:
+    application:
+        name: tutorpus
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.MariaDBDialect
+    datasource:
+        url: jdbc:mariadb://tutorpus-db.cx26ecsya9cf.ap-northeast-2.rds.amazonaws.com:3306/tutorpus_db
+        username: jettie
+        password: tutorpus1234!
+        driver-class-name: org.mariadb.jdbc.Driver
+
+jwt:
+    header: Authorization
+    expiration-time: 86400000 #1?
+    secret-key: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
