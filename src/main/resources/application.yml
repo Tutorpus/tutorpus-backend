@@ -15,6 +15,6 @@ spring:
         driver-class-name: org.mariadb.jdbc.Driver
 
 jwt:
-    header: Authorizationit
+    header: Authorization
     expiration-time: 86400000 #1?
     secret-key: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
