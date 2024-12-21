@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 코드 체크아웃
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -23,7 +24,7 @@ jobs:
 
       # Gradle 빌드
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew clean build
 
       # 테스트 실행
       - name: Run Tests
@@ -35,16 +36,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 코드 체크아웃
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # SSH 키 설정
       - name: Set up SSH Key
         uses: webfactory/ssh-agent@v0.8.0
         with:
           ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
+      # EC2 서버에 배포 스크립트 실행
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
-            ~/app/step1/deploy.sh
+            # 배포 디렉터리 이동
+            cd ~/app/step1
+
+            # 배포 스크립트 실행
+            ./deploy.sh
           EOF
