@@ -1,7 +1,6 @@
 package com.tutorpus.tutorpus.student.controller;
 
 import com.tutorpus.tutorpus.auth.LoginUser;
-import com.tutorpus.tutorpus.auth.dto.SessionMember;
 import com.tutorpus.tutorpus.exception.CustomException;
 import com.tutorpus.tutorpus.exception.ErrorCode;
 import com.tutorpus.tutorpus.member.entity.Member;

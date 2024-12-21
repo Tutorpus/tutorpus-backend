@@ -4,6 +4,7 @@ import com.tutorpus.tutorpus.auth.LoginUser;
 import com.tutorpus.tutorpus.auth.dto.SessionMember;
 import com.tutorpus.tutorpus.member.dto.DevideDto;
 import com.tutorpus.tutorpus.member.dto.LoginDto;
+import com.tutorpus.tutorpus.member.dto.ReturnLoginDto;
 import com.tutorpus.tutorpus.member.dto.SignupDto;
 import com.tutorpus.tutorpus.member.entity.Member;
 import com.tutorpus.tutorpus.member.entity.Role;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,9 +41,8 @@ public class MemberController {
     //자체 로그인
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) throws Exception {
-        Member loginMember = memberService.login(loginDto);
-        if (loginMember == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("존재하지 않는 회원입니다.");
-        return ResponseEntity.ok(loginMember);
+        ReturnLoginDto returnDto = memberService.login(loginDto);
+        return ResponseEntity.ok(returnDto);
     }
 
     @GetMapping("/logout")

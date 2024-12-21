@@ -1,20 +1,17 @@
 package com.tutorpus.tutorpus.member.service;
 
+import com.tutorpus.tutorpus.config.jwt.JwtTokenProvider;
 import com.tutorpus.tutorpus.exception.CustomException;
 import com.tutorpus.tutorpus.exception.ErrorCode;
 import com.tutorpus.tutorpus.member.dto.DevideDto;
 import com.tutorpus.tutorpus.member.dto.LoginDto;
+import com.tutorpus.tutorpus.member.dto.ReturnLoginDto;
 import com.tutorpus.tutorpus.member.dto.SignupDto;
 import com.tutorpus.tutorpus.member.entity.Member;
 import com.tutorpus.tutorpus.member.entity.Role;
 import com.tutorpus.tutorpus.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-//import org.springframework.security.authentication.AuthenticationManager;
-//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-//import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-//import org.springframework.security.core.Authentication;
-//import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +22,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final HttpSession httpSession;
     private final PasswordEncoder passwordEncoder;
-//    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
     public Role getTeacherOrStudent(DevideDto devideDto) {
@@ -55,24 +52,17 @@ public class MemberService {
     }
 
     @Transactional
-    public Member login(LoginDto loginDto) throws Exception {
-        Member member = memberRepository.findByEmail(loginDto.getEmail()).orElse(null);
-        if(member == null) return null;
-
-        if (!passwordEncoder.matches(loginDto.getPassword(), member.getPassword()))
+    public ReturnLoginDto login(LoginDto loginDto) throws Exception {
+        Member member = memberRepository.findByEmail(loginDto.getEmail())
+                .orElseThrow(() -> new CustomException(ErrorCode.NO_MEMBER));
+        if (!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_INCORRECT);
+        }
 
-//        // 사용자 정보 기반으로 Authentication 객체 생성
-//        Authentication authentication = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())
-//        );
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // JWT 토큰 생성
+        String jwt = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString());
 
-        // 세션에 사용자 정보 저장
-        //SessionMember sessionMember = new SessionMember(member);  // 세션에 저장할 사용자 정보
-        httpSession.setAttribute("member", member);
-
-        return member;
+        return new ReturnLoginDto(jwt, member.getName(), member.getEmail(), member.getRole().getTitle());
     }
 
     public void logout(Member member) {
