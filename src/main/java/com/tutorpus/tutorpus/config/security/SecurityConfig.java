@@ -1,6 +1,6 @@
 package com.tutorpus.tutorpus.config.security;
 
-import com.tutorpus.tutorpus.config.jwt.JwtAuthenticationFilter;
+import com.tutorpus.tutorpus.auth.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

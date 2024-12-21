@@ -1,6 +1,6 @@
 package com.tutorpus.tutorpus.auth;
 
-import com.tutorpus.tutorpus.config.jwt.JwtTokenProvider;
+import com.tutorpus.tutorpus.auth.jwt.JwtTokenProvider;
 import com.tutorpus.tutorpus.exception.CustomException;
 import com.tutorpus.tutorpus.exception.ErrorCode;
 import com.tutorpus.tutorpus.member.entity.Member;

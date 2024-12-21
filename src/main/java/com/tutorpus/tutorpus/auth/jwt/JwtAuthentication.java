@@ -1,4 +1,4 @@
-package com.tutorpus.tutorpus.config.jwt;
+package com.tutorpus.tutorpus.auth.jwt;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
