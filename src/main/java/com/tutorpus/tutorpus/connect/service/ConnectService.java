@@ -12,7 +12,6 @@ import com.tutorpus.tutorpus.member.entity.Member;
 import com.tutorpus.tutorpus.member.entity.Role;
 import com.tutorpus.tutorpus.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
