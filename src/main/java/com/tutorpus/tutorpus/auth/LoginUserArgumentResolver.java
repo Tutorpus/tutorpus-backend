@@ -1,9 +1,11 @@
 package com.tutorpus.tutorpus.auth;
 
+import com.tutorpus.tutorpus.config.jwt.JwtTokenProvider;
 import com.tutorpus.tutorpus.exception.CustomException;
 import com.tutorpus.tutorpus.exception.ErrorCode;
 import com.tutorpus.tutorpus.member.entity.Member;
-import jakarta.servlet.http.HttpSession;
+import com.tutorpus.tutorpus.member.repository.MemberRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -15,10 +17,12 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @RequiredArgsConstructor
 @Component
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
-    private final HttpSession httpSession;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final MemberRepository memberRepository;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
+        // LoginUser 어노테이션이 붙어 있고, 타입이 Member인 경우 지원
         boolean isLoginUserAnnotation = parameter.getParameterAnnotation(LoginUser.class) != null;
         boolean isUserClass = Member.class.equals(parameter.getParameterType());
 
@@ -26,10 +30,32 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        Member member = (Member) httpSession.getAttribute("member");
-        if (member == null)
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
-        return member;
+    public Object resolveArgument(MethodParameter parameter,
+                                  ModelAndViewContainer mavContainer,
+                                  NativeWebRequest webRequest,
+                                  WebDataBinderFactory binderFactory) throws Exception {
+        // 요청 헤더에서 토큰 추출
+        HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
+        String token = resolveToken(request);
+
+        if (token == null || !jwtTokenProvider.validateToken(token)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED); // 유효하지 않은 경우 예외 처리
+        }
+
+        // 토큰에서 이메일 추출
+        String email = jwtTokenProvider.getEmail(token);
+
+        // 이메일로 사용자 조회
+        return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.NO_MEMBER)); // 사용자 없을 시 예외 처리
+    }
+
+    // Request Header 에서 토큰 정보를 꺼내오기 위한 메소드
+    private String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7); // "Bearer " 이후의 토큰 반환
+        }
+        return null;
     }
 }
