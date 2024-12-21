@@ -1,5 +1,6 @@
-package com.tutorpus.tutorpus.exception;
+package com.tutorpus.tutorpus.exception.dto;
 
+import com.tutorpus.tutorpus.exception.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
