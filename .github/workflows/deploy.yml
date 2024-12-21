@@ -6,33 +6,8 @@ on:
       - main
 
 jobs:
-  build:
-    name: Build and Test
-    runs-on: ubuntu-latest
-
-    steps:
-      # 코드 체크아웃
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      # Java JDK 설정
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      # Gradle 빌드
-      - name: Build with Gradle
-        run: ./gradlew clean build
-
-      # 테스트 실행
-      - name: Run Tests
-        run: ./gradlew test
-
   deploy:
-    name: Deploy to EC2
-    needs: build
+    name: Build and Deploy
     runs-on: ubuntu-latest
 
     steps:
@@ -46,12 +21,12 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
-      # EC2 서버에 배포 스크립트 실행
+      # EC2 서버로 배포 스크립트 실행
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
-            # 배포 디렉터리 이동
-            cd ~/app/step1
+            # 배포 스크립트 경로로 이동
+            cd /home/ec2-user/app/step1
 
             # 배포 스크립트 실행
             ./deploy.sh
