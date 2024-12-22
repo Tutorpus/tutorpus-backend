@@ -5,9 +5,9 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @NoArgsConstructor
@@ -45,6 +45,13 @@ public class Schedule {
         this.connect = connect;
         this.isDeleted = isDeleted;
         this.editDate = editDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
+    public void updateSchedule(Connect connect, LocalDate addDate, LocalTime startTime, LocalTime endTime) {
+        this.connect = connect;
+        this.editDate = addDate;
         this.startTime = startTime;
         this.endTime = endTime;
     }

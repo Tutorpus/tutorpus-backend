@@ -84,25 +84,32 @@ public class ScheduleService {
         Connect connect = connectRepository.findById(editDto.getConnectId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NO_CONNECT_ID));
 
-        //삭제
-        Schedule deleteSchedule = Schedule.builder()
-                .connect(connect)
-                .isDeleted(true)   //삭제
-                .editDate(editDto.getEditDate())
-                .startTime(null)
-                .endTime(null)
-                .build();
-        scheduleRepository.save(deleteSchedule);
+        //삭제하려는 날짜가 수정된 날짜인 경우 - 이미 수정된 날짜 자체를 재수정
+        Schedule existSchedule = scheduleRepository.findIfIsAlreadyEdited(connect.getId(), editDto.getEditDate().toLocalDate(), editDto.getEditDate().toLocalTime(), false);
+        if(existSchedule != null){
+            existSchedule.updateSchedule(connect, editDto.getAddDate(), editDto.getStartTime(), editDto.getEndTime());
+        }
+        else{
+            //삭제
+            Schedule deleteSchedule = Schedule.builder()
+                    .connect(connect)
+                    .isDeleted(true)   //삭제
+                    .editDate(editDto.getEditDate().toLocalDate())
+                    .startTime(null)
+                    .endTime(null)
+                    .build();
+            scheduleRepository.save(deleteSchedule);
 
-        //추가
-        Schedule addSchedule = Schedule.builder()
-                .connect(connect)
-                .isDeleted(false)   //추가
-                .editDate(editDto.getAddDate())
-                .startTime(editDto.getStartTime())
-                .endTime(editDto.getEndTime())
-                .build();
-        scheduleRepository.save(addSchedule);
+            //추가
+            Schedule addSchedule = Schedule.builder()
+                    .connect(connect)
+                    .isDeleted(false)   //추가
+                    .editDate(editDto.getAddDate())
+                    .startTime(editDto.getStartTime())
+                    .endTime(editDto.getEndTime())
+                    .build();
+            scheduleRepository.save(addSchedule);
+        }
     }
 
     //단순 저장한 classDay의 요일의 전체 날짜만 조회
