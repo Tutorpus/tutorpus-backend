@@ -13,6 +13,7 @@ public enum ErrorCode {
     UNAUTHORIZED("로그인이 필요합니다.", HttpStatus.UNAUTHORIZED),
 
     //스케쥴 관련
+    ALREADY_EXIST_CONNECT("이미 해당 학생과 연결되어있습니다.", HttpStatus.CONFLICT),
     NO_CONNECT_ID("존재하는 선생님과 학생 연결 id가 없습니다.", HttpStatus.NOT_FOUND),
     CANNOT_ADD_SCHEDULE("과외 시작시간과 종료시간이 없습니다.", HttpStatus.BAD_REQUEST),
     NO_EXIST_DAY("존재하지 않는 요일입니다.", HttpStatus.BAD_REQUEST),

@@ -26,6 +26,9 @@ public class ConnectService {
     public void teacherStudentConnect(ConnectRequestDto connectDto, Member teacher) {
         Member student = memberRepository.findByEmail(connectDto.getStudentEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.NO_MEMBER));
+        //이미 connect가 존재하는 경우 409 에러
+        if(connectRepository.findIfDuplicate(teacher.getId(), student.getId()) != null)
+            throw new CustomException(ErrorCode.ALREADY_EXIST_CONNECT);
         //선생님이 학생만 저장할 수 있음. 그외의 경우 에러
         if (student.getRole() != Role.STUDENT) throw new CustomException(ErrorCode.NOT_STUDENT);
         if (teacher.getRole() != Role.TEACHER) throw new CustomException(ErrorCode.NOT_TEACHER);
