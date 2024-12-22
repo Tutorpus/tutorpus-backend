@@ -33,11 +33,12 @@ public class ConnectService {
         if (student.getRole() != Role.STUDENT) throw new CustomException(ErrorCode.NOT_STUDENT);
         if (teacher.getRole() != Role.TEACHER) throw new CustomException(ErrorCode.NOT_TEACHER);
 
-        //선생님과 학생 연결정보
+        //선생님과 학생 연결정보 저장
         Connect connect = Connect.builder()
                 .teacher(teacher)
                 .student(student)
                 .subject(connectDto.getSubject())
+                .color(connectDto.getColor())
                 .build();
         connectRepository.save(connect);
 
