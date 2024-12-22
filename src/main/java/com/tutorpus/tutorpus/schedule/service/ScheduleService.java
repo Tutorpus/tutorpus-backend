@@ -163,7 +163,7 @@ public class ScheduleService {
 
             // 날짜 정렬
             onlyDaySchedule.sort(Comparator.naturalOrder());
-            ClassReturnDto dayDto = new ClassReturnDto(student.getColor(), onlyDaySchedule);
+            ClassReturnDto dayDto = new ClassReturnDto(connect.getColor(), onlyDaySchedule);
             scheduleMap.put(connect.getId(), dayDto);
         }
 
@@ -183,9 +183,7 @@ public class ScheduleService {
             for (ClassDay classDay : classDays) {
                 // 클릭한 날짜의 요일과 classDay의 요일 비교
                 if (classDay.getDay().getDayOfWeek() == clickDate.getDayOfWeek()) {
-                    //학생정보
-                    Student student = studentRepository.findByMemberId(connect.getStudent().getId());
-                    ClassDto dto = ClassDto.toDto(connect, student, classDay.getStartTime(), classDay.getEndTime());
+                    ClassDto dto = ClassDto.toDto(connect, classDay.getStartTime(), classDay.getEndTime());
                     classDtos.add(dto);
                 }
             }
@@ -202,10 +200,8 @@ public class ScheduleService {
         //추가 - 해당 날짜가 추가 리스트에 있는 경우
         for(Connect connect : connectList) {
             List<Schedule> addDate = scheduleRepository.findByConnectIdAndDateAndIsDeleted(connect.getId(), clickDate, false);
-            //학생정보
-            Student student = studentRepository.findByMemberId(connect.getStudent().getId());
             for(Schedule add : addDate){
-                ClassDto dto = ClassDto.toDto(connect, student, add.getStartTime(), add.getEndTime());
+                ClassDto dto = ClassDto.toDto(connect, add.getStartTime(), add.getEndTime());
                 classDtos.add(dto);
             }
         }

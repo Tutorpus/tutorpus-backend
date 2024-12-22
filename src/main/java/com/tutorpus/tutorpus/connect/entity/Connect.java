@@ -30,10 +30,14 @@ public class Connect {
     @Column(nullable = false)
     private String subject;
 
+    @Column(nullable = false)
+    private String color;
+
     @Builder
-    public Connect(Member teacher, Member student, String subject){
+    public Connect(Member teacher, Member student, String subject, String color){
         this.teacher = teacher;
         this.student = student;
         this.subject = subject;
+        this.color = color;
     }
 }

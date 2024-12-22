@@ -24,12 +24,12 @@ public class ClassDto {
     LocalTime startTime;
     LocalTime endTime;
 
-    public static ClassDto toDto(Connect connect, Student student, LocalTime startTime, LocalTime endTime) {
+    public static ClassDto toDto(Connect connect, LocalTime startTime, LocalTime endTime) {
         ClassDto dto = new ClassDto();
         dto.connectId = connect.getId();
         dto.studentName = connect.getStudent().getName();
         dto.subject = connect.getSubject();
-        dto.color = student.getColor();
+        dto.color = connect.getColor();
         dto.startTime = startTime;
         dto.endTime = endTime;
         return dto;
