@@ -55,7 +55,7 @@ public class ScheduleController {
         return ResponseEntity.ok(classDtos);
     }
     
-    //한 학생의 전체 스케쥴 조회
+    //한 학생의 전체 수업목록
     @GetMapping("/student/{connectId}/{year}/{month}")
     public ResponseEntity<?> getStudentSchedule(@LoginUser Member loginMember,
                                               @PathVariable("connectId") Long connectId, @PathVariable("year") int year, @PathVariable("month") int month){

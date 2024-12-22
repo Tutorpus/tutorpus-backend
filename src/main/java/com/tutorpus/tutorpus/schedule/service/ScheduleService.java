@@ -212,6 +212,7 @@ public class ScheduleService {
         return classDtos;
     }
 
+    //한 학생의 전체 수업목록
     @Transactional(readOnly = true)
     public Map<LocalDate, StudentScheduleDto> scheduleStudentDetail(int year, int month, Member loginMember, Long connectId) {
         Connect connect = connectRepository.findById(connectId)
@@ -233,11 +234,7 @@ public class ScheduleService {
                     .collect(Collectors.toMap(
                             date -> date,
                             date -> {
-                                StudentScheduleDto dto = StudentScheduleDto.builder()
-                                        .day(c.getDay().getDayOfWeek())
-                                        .startTime(c.getStartTime())
-                                        .endTime(c.getEndTime())
-                                        .build();
+                                StudentScheduleDto dto = StudentScheduleDto.classDayToDto(c);
                                 return dto;
                             }
                     ));
@@ -254,11 +251,7 @@ public class ScheduleService {
         // 추가
         for (Schedule s : addSchedule) {
             if (!returnDto.containsKey(s.getEditDate())) {
-                StudentScheduleDto dto = StudentScheduleDto.builder()
-                        .day(s.getEditDate().getDayOfWeek())
-                        .startTime(s.getStartTime())
-                        .endTime(s.getEndTime())
-                        .build();
+                StudentScheduleDto dto = StudentScheduleDto.scheduleToDto(s);
                 returnDto.put(s.getEditDate(), dto);
             }
         }
