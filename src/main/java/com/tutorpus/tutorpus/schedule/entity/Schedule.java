@@ -28,7 +28,7 @@ public class Schedule {
     @Column(name = "edit_date", nullable = false)
     private LocalDate editDate;
 
-    //과외 시작 시간 - 삭제의 경우 null 가능
+    //과외 시작 시간 - 삭제의 경우 삭제날짜의 시간
     @Column(name = "start_time")
     private LocalTime startTime;
 

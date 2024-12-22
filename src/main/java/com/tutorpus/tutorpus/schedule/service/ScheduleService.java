@@ -57,14 +57,22 @@ public class ScheduleService {
 
         Connect connect = connectRepository.findById(deleteDto.getConnectId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NO_CONNECT_ID));
-        Schedule schedule = Schedule.builder()
-                .connect(connect)
-                .isDeleted(true)   //삭제
-                .editDate(deleteDto.getDeleteDate())
-                .startTime(null)
-                .endTime(null)
-                .build();
-        scheduleRepository.save(schedule);
+
+        //삭제하려는 날짜가 수정된 날짜인 경우 - 수정된 날짜 자체를 테이블에서 제거
+        Schedule existSchedule = scheduleRepository.findIfIsAlreadyEdited(connect.getId(), deleteDto.getDeleteDate().toLocalDate(), deleteDto.getDeleteDate().toLocalTime(), false);
+        if(existSchedule != null){
+            scheduleRepository.delete(existSchedule);
+        }
+        else{
+            Schedule schedule = Schedule.builder()
+                    .connect(connect)
+                    .isDeleted(true)   //삭제
+                    .editDate(deleteDto.getDeleteDate().toLocalDate())
+                    .startTime(deleteDto.getDeleteDate().toLocalTime())
+                    .endTime(null)
+                    .build();
+            scheduleRepository.save(schedule);
+        }
     }
 
     @Transactional
