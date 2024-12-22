@@ -19,11 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ConnectController {
     private final ConnectService connectService;
-    private final MemberRepository memberRepository;
 
     @PostMapping()
     public ResponseEntity<?> teacherStudentConnect(@RequestBody ConnectRequestDto connectDto, @LoginUser Member member){
-        //선생님만 학생 추가 가능
         connectService.teacherStudentConnect(connectDto, member);
         return ResponseEntity.ok("선생님과 학생 연결 완료");
     }
