@@ -15,4 +15,9 @@ public interface ConnectRepository extends JpaRepository<Connect, Long> {
     @Query(value = "SELECT * FROM connect c WHERE c.teacher_id = :id OR c.student_id = :id",
             nativeQuery = true)
     List<Connect> findByMemberId(@Param("id") Long id);
+
+    //이미 존재하는 connect인지 확인
+    @Query(value = "SELECT * FROM connect c WHERE c.teacher_id = :teacher_id AND c.student_id = :student_id",
+            nativeQuery = true)
+    Connect findIfDuplicate(@Param("teacher_id") Long teacher_id, @Param("student_id") Long student_id);
 }
