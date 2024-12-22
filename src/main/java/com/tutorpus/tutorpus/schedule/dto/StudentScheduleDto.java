@@ -1,6 +1,8 @@
 package com.tutorpus.tutorpus.schedule.dto;
 
+import com.tutorpus.tutorpus.connect.entity.ClassDay;
 import com.tutorpus.tutorpus.connect.entity.Day;
+import com.tutorpus.tutorpus.schedule.entity.Schedule;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -17,10 +19,19 @@ public class StudentScheduleDto {
     LocalTime startTime;
     LocalTime endTime;
 
-    @Builder
-    public StudentScheduleDto(DayOfWeek day, LocalTime startTime, LocalTime endTime){
-        this.day = day;
-        this.startTime = startTime;
-        this.endTime = endTime;
+    public static StudentScheduleDto scheduleToDto(Schedule schedule){
+        StudentScheduleDto dto = new StudentScheduleDto();
+        dto.day = schedule.getEditDate().getDayOfWeek();
+        dto.startTime = schedule.getStartTime();
+        dto.endTime = schedule.getEndTime();
+        return dto;
+    }
+
+    public static StudentScheduleDto classDayToDto(ClassDay classDay){
+        StudentScheduleDto dto = new StudentScheduleDto();
+        dto.day = classDay.getDay().getDayOfWeek();
+        dto.startTime = classDay.getStartTime();
+        dto.endTime = classDay.getEndTime();
+        return dto;
     }
 }

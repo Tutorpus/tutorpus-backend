@@ -185,14 +185,7 @@ public class ScheduleService {
                 if (classDay.getDay().getDayOfWeek() == clickDate.getDayOfWeek()) {
                     //학생정보
                     Student student = studentRepository.findByMemberId(connect.getStudent().getId());
-                    ClassDto dto = ClassDto.builder()
-                            .connectId(connect.getId())
-                            .studentName(connect.getStudent().getName())
-                            .subject(connect.getSubject())
-                            .color(student.getColor())
-                            .startTime(classDay.getStartTime())
-                            .endTime(classDay.getEndTime())
-                            .build();
+                    ClassDto dto = ClassDto.toDto(connect, student, classDay.getStartTime(), classDay.getEndTime());
                     classDtos.add(dto);
                 }
             }
@@ -212,20 +205,14 @@ public class ScheduleService {
             //학생정보
             Student student = studentRepository.findByMemberId(connect.getStudent().getId());
             for(Schedule add : addDate){
-                ClassDto dto = ClassDto.builder()
-                        .connectId(connect.getId())
-                        .studentName(connect.getStudent().getName())
-                        .subject(connect.getSubject())
-                        .color(student.getColor())
-                        .startTime(add.getStartTime())
-                        .endTime(add.getEndTime())
-                        .build();
+                ClassDto dto = ClassDto.toDto(connect, student, add.getStartTime(), add.getEndTime());
                 classDtos.add(dto);
             }
         }
         return classDtos;
     }
 
+    //한 학생의 전체 수업목록
     @Transactional(readOnly = true)
     public Map<LocalDate, StudentScheduleDto> scheduleStudentDetail(int year, int month, Member loginMember, Long connectId) {
         Connect connect = connectRepository.findById(connectId)
@@ -247,11 +234,7 @@ public class ScheduleService {
                     .collect(Collectors.toMap(
                             date -> date,
                             date -> {
-                                StudentScheduleDto dto = StudentScheduleDto.builder()
-                                        .day(c.getDay().getDayOfWeek())
-                                        .startTime(c.getStartTime())
-                                        .endTime(c.getEndTime())
-                                        .build();
+                                StudentScheduleDto dto = StudentScheduleDto.classDayToDto(c);
                                 return dto;
                             }
                     ));
@@ -268,11 +251,7 @@ public class ScheduleService {
         // 추가
         for (Schedule s : addSchedule) {
             if (!returnDto.containsKey(s.getEditDate())) {
-                StudentScheduleDto dto = StudentScheduleDto.builder()
-                        .day(s.getEditDate().getDayOfWeek())
-                        .startTime(s.getStartTime())
-                        .endTime(s.getEndTime())
-                        .build();
+                StudentScheduleDto dto = StudentScheduleDto.scheduleToDto(s);
                 returnDto.put(s.getEditDate(), dto);
             }
         }
