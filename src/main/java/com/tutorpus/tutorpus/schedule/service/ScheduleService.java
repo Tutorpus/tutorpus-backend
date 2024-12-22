@@ -185,14 +185,7 @@ public class ScheduleService {
                 if (classDay.getDay().getDayOfWeek() == clickDate.getDayOfWeek()) {
                     //학생정보
                     Student student = studentRepository.findByMemberId(connect.getStudent().getId());
-                    ClassDto dto = ClassDto.builder()
-                            .connectId(connect.getId())
-                            .studentName(connect.getStudent().getName())
-                            .subject(connect.getSubject())
-                            .color(student.getColor())
-                            .startTime(classDay.getStartTime())
-                            .endTime(classDay.getEndTime())
-                            .build();
+                    ClassDto dto = ClassDto.toDto(connect, student, classDay.getStartTime(), classDay.getEndTime());
                     classDtos.add(dto);
                 }
             }
@@ -212,14 +205,7 @@ public class ScheduleService {
             //학생정보
             Student student = studentRepository.findByMemberId(connect.getStudent().getId());
             for(Schedule add : addDate){
-                ClassDto dto = ClassDto.builder()
-                        .connectId(connect.getId())
-                        .studentName(connect.getStudent().getName())
-                        .subject(connect.getSubject())
-                        .color(student.getColor())
-                        .startTime(add.getStartTime())
-                        .endTime(add.getEndTime())
-                        .build();
+                ClassDto dto = ClassDto.toDto(connect, student, add.getStartTime(), add.getEndTime());
                 classDtos.add(dto);
             }
         }

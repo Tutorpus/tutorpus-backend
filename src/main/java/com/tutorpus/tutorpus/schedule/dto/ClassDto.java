@@ -1,5 +1,9 @@
 package com.tutorpus.tutorpus.schedule.dto;
 
+import com.tutorpus.tutorpus.connect.entity.ClassDay;
+import com.tutorpus.tutorpus.connect.entity.Connect;
+import com.tutorpus.tutorpus.member.entity.Member;
+import com.tutorpus.tutorpus.student.entity.Student;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -20,13 +24,14 @@ public class ClassDto {
     LocalTime startTime;
     LocalTime endTime;
 
-    @Builder
-    public ClassDto(Long connectId, String studentName, String subject, String color, LocalTime startTime, LocalTime endTime){
-        this.connectId = connectId;
-        this.studentName =  studentName;
-        this.subject = subject;
-        this.color = color;
-        this.startTime = startTime;
-        this.endTime = endTime;
+    public static ClassDto toDto(Connect connect, Student student, LocalTime startTime, LocalTime endTime) {
+        ClassDto dto = new ClassDto();
+        dto.connectId = connect.getId();
+        dto.studentName = connect.getStudent().getName();
+        dto.subject = connect.getSubject();
+        dto.color = student.getColor();
+        dto.startTime = startTime;
+        dto.endTime = endTime;
+        return dto;
     }
 }
