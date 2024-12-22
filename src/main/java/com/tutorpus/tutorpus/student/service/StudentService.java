@@ -28,7 +28,6 @@ public class StudentService {
                 .school(studentInfoDto.getSchool())
                 .icon("/image/path")    //TODO: icon path 정해지면 랜덤값으로 넣어주기
                 .grade(studentInfoDto.getGrade())
-                .color(studentInfoDto.getColor())
                 .build();
         studentRepository.save(student);
     }
@@ -47,7 +46,7 @@ public class StudentService {
                     .school(student.getSchool() + student.getGrade())
                     .iconPath(student.getIcon())
                     .subject(connect.getSubject())
-                    .color(student.getColor())
+                    .color(connect.getColor())
                     .build();
 
             returnDto.add(dto);
