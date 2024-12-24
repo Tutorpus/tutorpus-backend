@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Collections;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -51,7 +53,7 @@ public class FeedbackService {
     }
 
     @Transactional(readOnly = true)
-    public ReturnFeedbackDto getFeedback(Member member, Long connectId, LocalDate date, LocalTime startTime) {
+    public List<ReturnFeedbackDto> getFeedback(Member member, Long connectId, LocalDate date, LocalTime startTime) {
         Connect connect = connectRepository.findById(connectId)
                 .orElseThrow(()-> new CustomException(ErrorCode.NO_CONNECT_ID));
         if (!connect.getTeacher().getId().equals(member.getId()) &&
@@ -62,7 +64,9 @@ public class FeedbackService {
         //선택수업 LocalDateTime으로 변환
         LocalDateTime dateTime = LocalDateTime.of(date, startTime);
         Feedback feedback = feedbackRepository.findByConnectIdAndClassDate(connectId, dateTime);
-        ReturnFeedbackDto returnDto = ReturnFeedbackDto.FeedbackToDto(feedback);
-        return returnDto;
+        if (feedback == null) {
+            return Collections.emptyList();
+        }
+        return List.of(ReturnFeedbackDto.FeedbackToDto(feedback));
     }
 }
