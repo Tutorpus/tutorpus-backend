@@ -12,10 +12,13 @@ import java.util.List;
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     //삭제/추가 리스트 조회
     @Query(value = "SELECT * FROM schedule s " +
-                    "WHERE s.connect_id = :connectId AND s.is_deleted = :isDeleted",
+            "WHERE s.connect_id = :connectId AND s.is_deleted = :isDeleted " +
+            "AND YEAR(s.edit_date) = :year AND MONTH(s.edit_date) = :month",
             nativeQuery = true)
-    List<Schedule> findByConnectIdAndIsDeleted(@Param("connectId") Long connectId,
-                                               @Param("isDeleted") Boolean isDeleted);
+    List<Schedule> findByConnectIdAndIsDeletedAndDate(@Param("connectId") Long connectId,
+                                                      @Param("isDeleted") Boolean isDeleted,
+                                                      @Param("year") int year,
+                                                      @Param("month") int month);
 
     //해당 날짜의 삭제/추가 조회
     @Query(value = "SELECT * FROM schedule s " +

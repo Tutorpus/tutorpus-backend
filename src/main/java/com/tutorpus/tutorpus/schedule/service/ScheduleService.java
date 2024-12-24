@@ -143,10 +143,10 @@ public class ScheduleService {
             // 각 Connect에 대한 날짜 리스트를 구함
             Student student = studentRepository.findByMemberId(connect.getStudent().getId());
             List<LocalDate> onlyDaySchedule = onlyWithDayScheduleAndConnect(year, month, connect); // Connect별로 처리
-            List<LocalDate> deleteList = scheduleRepository.findByConnectIdAndIsDeleted(connect.getId(), true).stream()
+            List<LocalDate> deleteList = scheduleRepository.findByConnectIdAndIsDeletedAndDate(connect.getId(), true, year, month).stream()
                     .map(schedule -> schedule.getEditDate())
                     .collect(Collectors.toList());
-            List<LocalDate> addList = scheduleRepository.findByConnectIdAndIsDeleted(connect.getId(), false).stream()
+            List<LocalDate> addList = scheduleRepository.findByConnectIdAndIsDeletedAndDate(connect.getId(), false, year, month).stream()
                     .map(schedule -> schedule.getEditDate())
                     .collect(Collectors.toList());
 
@@ -238,8 +238,8 @@ public class ScheduleService {
         }
 
         //삭제 후 추가
-        List<Schedule> deleteSchedule = scheduleRepository.findByConnectIdAndIsDeleted(connect.getId(), true);
-        List<Schedule> addSchedule = scheduleRepository.findByConnectIdAndIsDeleted(connect.getId(), false);
+        List<Schedule> deleteSchedule = scheduleRepository.findByConnectIdAndIsDeletedAndDate(connect.getId(), true, year, month);
+        List<Schedule> addSchedule = scheduleRepository.findByConnectIdAndIsDeletedAndDate(connect.getId(), false, year, month);
         // 삭제
         for (Schedule s : deleteSchedule) {
             returnDto.remove(s.getEditDate());
