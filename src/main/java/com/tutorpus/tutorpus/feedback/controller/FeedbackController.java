@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +28,7 @@ public class FeedbackController {
     @GetMapping("/{connectId}/{date}/{startTime}")
     public ResponseEntity<?> getHomework(@LoginUser Member member,
                                          @PathVariable("connectId") Long connectId, @PathVariable("date") LocalDate date, @PathVariable("startTime") LocalTime startTime){
-        ReturnFeedbackDto feedback = feedbackService.getFeedback(member, connectId, date, startTime);
-        return ResponseEntity.ok(feedback);
+        List<ReturnFeedbackDto> returnDto = feedbackService.getFeedback(member, connectId, date, startTime);
+        return ResponseEntity.ok(returnDto);
     }
 }
