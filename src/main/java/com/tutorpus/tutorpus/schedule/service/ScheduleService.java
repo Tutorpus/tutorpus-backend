@@ -114,13 +114,12 @@ public class ScheduleService {
 
     //단순 저장한 classDay의 요일의 전체 날짜만 조회
     public List<LocalDate> onlyWithDayScheduleAndConnect(int year, int month, Connect connect){
-        //시작날짜가 지난 classDay list
-        List<ClassDay> classDays = classDayRepository.findByYearAndMonth(connect.getId(), year, month);
-
         // 해당 월의 첫날과 마지막 날 계산 (YearMonth 클래스 사용)
         YearMonth yearMonth = YearMonth.of(year, month);
         LocalDate startOfMonth = yearMonth.atDay(1);
         LocalDate endOfMonth = yearMonth.atEndOfMonth();
+        //시작날짜가 지난 classDay list
+        List<ClassDay> classDays = classDayRepository.findByStartDateBefore(connect.getId(), endOfMonth);
 
         List<LocalDate> returnDates = new ArrayList<>();
         for(ClassDay c : classDays){
@@ -178,7 +177,9 @@ public class ScheduleService {
         LocalDate clickDate = LocalDate.of(year, month, day);   //찾으려는 날짜
         //시작날짜가 지난 classDay list
         for(Connect connect : connectList){
-            List<ClassDay> classDays = classDayRepository.findByYearAndMonth(connect.getId(), year, month);
+            YearMonth yearMonth = YearMonth.of(year, month);
+            LocalDate endOfMonth = yearMonth.atEndOfMonth();
+            List<ClassDay> classDays = classDayRepository.findByStartDateBefore(connect.getId(), endOfMonth);
 
             for (ClassDay classDay : classDays) {
                 // 클릭한 날짜의 요일과 classDay의 요일 비교
@@ -215,12 +216,12 @@ public class ScheduleService {
                         .orElseThrow(()-> new CustomException(ErrorCode.NO_CONNECT_ID));
         Map<LocalDate, StudentScheduleDto> returnDto = new HashMap<>(); //반환 dto
 
-        //추가/삭제 제외 날짜 리스트
-        List<ClassDay> classDays = classDayRepository.findByYearAndMonth(connect.getId(), year, month);
         // 해당 월의 첫날과 마지막 날 계산 (YearMonth 클래스 사용)
         YearMonth yearMonth = YearMonth.of(year, month);
         LocalDate startOfMonth = yearMonth.atDay(1);
         LocalDate endOfMonth = yearMonth.atEndOfMonth();
+        //추가/삭제 제외 날짜 리스트
+        List<ClassDay> classDays = classDayRepository.findByStartDateBefore(connect.getId(), endOfMonth);
 
         for(ClassDay c : classDays){
             Map<LocalDate, StudentScheduleDto> matchingDates = startOfMonth.datesUntil(endOfMonth.plusDays(1))
